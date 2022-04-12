@@ -1,0 +1,3 @@
+[submodule "ilqr"]
+	path = ilqr
+	url = git@github.com:Kongx231/ilqr.git
