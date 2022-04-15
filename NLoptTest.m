@@ -33,8 +33,8 @@ rw=0.4;
 % F_x=interp1(T,U(:,2),t,'previous','extrap');
 
 %slip ratio function
-b_f=(w-u_f)/max(u_f^2+0.05, w^2+0.05);
-b_r=(w-u)/max(u^2+0.05, w^2+0.05);
+b_f=w/max(u_f^2+0.05, w^2+0.05);
+b_r=w/max(u^2+0.05, w^2+0.05);
 
 %slip angle functions in degrees
 a_f=rad2deg(delta_f-atan2(v+a*r,u));
