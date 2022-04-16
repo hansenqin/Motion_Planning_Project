@@ -1,5 +1,3 @@
-clear all; close all;
-
 %states
 syms x y h u v r w
 
@@ -63,13 +61,13 @@ f = [u*cos(h)-v*sin(h);  %x
 f_disc = states + f*dt;
 
 % Linearized discrete dynamical matrices
-A_disc = jacobian(f_disc,states);
-B_disc = jacobian(f_disc,inputs);
+A_c = jacobian(f,states);
+B_c = jacobian(f,inputs);
 
 
 %% Write functions for the dynamics
-calc_A_disc = matlabFunction(A_disc,'Vars',[{states},{inputs},{dt},{parameters}]);
-calc_B_disc = matlabFunction(B_disc,'Vars',[{states},{inputs},{dt},{parameters}]);
+calc_A_c = matlabFunction(A_c,'File', 'calc_A_c', 'Vars',[{states},{inputs},{parameters}]);
+calc_B_c = matlabFunction(B_c,'File', 'calc_B_c', 'Vars',[{states},{inputs},{parameters}]);
 
-f = matlabFunction(f,'Vars',[{states},{inputs},{parameters}]);
-f_disc = matlabFunction(f_disc,'Vars',[{states},{inputs},{dt},{parameters}]);
+f = matlabFunction(f, 'File', 'f_cont_fun', 'Vars',[{states},{inputs},{parameters}]);
+f_disc = matlabFunction(f_disc,'File', 'f_disc_fun', 'Vars',[{states},{inputs},{dt},{parameters}]);
