@@ -1,4 +1,4 @@
-close all
+% close all
 
 m=1400;
 Izz=2667;
@@ -14,7 +14,7 @@ lf=1.35;
 lr=1.45;
 rw=0.5;
 J = 100;
-dt = 0.05;
+dt = 0.01;
 parameters = [m Izz J lf lr rw]; 
 
 % symbolic_car_model();
@@ -27,7 +27,7 @@ x2 = 100;
 y2 = 20;
 
 x1_dot = 0;
-x2_dot = tan(pi/4);
+x2_dot = tan(0);
 
 A = [x1^3   x1^2  x1 1;
      x2^3   x2^2  x2 1;
@@ -111,6 +111,7 @@ end
 
 %% find control inputs
 T_est = (uvr_list(1,2)-uvr_list(1,1))/dt*m*2;
+T_est = 5000;
 delta_est = 0;
 inputs = [T_est; delta_est];
 inputs_list = [];
@@ -128,19 +129,19 @@ rhs = (x2-x1)/dt-x_dot_e;
 
 
 d_inputs = inv(B_c'*B_c)*B_c'*rhs;
-inputs = inputs+d_inputs
+inputs = inputs+d_inputs;
 inputs_list(:, end+1) = inputs;
 
 end
 
-%% test
-i=2;
-x1 = [xyh_list(:,i-1); uvr_list(:,i-1); uvr_list(1,i-1)*2];
-x2 = [xyh_list(:,i); uvr_list(:,i); uvr_list(1,i)*2];
-
-A_c = calc_A_c(x1, inputs, parameters);
-B_c = calc_B_c(x1, inputs, parameters);
-x_dot_e = f_cont_fun(x1, inputs, parameters);
+%% test area
+% i=2;
+% x1 = [xyh_list(:,i-1); uvr_list(:,i-1); uvr_list(1,i-1)*2];
+% x2 = [xyh_list(:,i); uvr_list(:,i); uvr_list(1,i)*2];
+% 
+% A_c = calc_A_c(x1, inputs, parameters);
+% B_c = calc_B_c(x1, inputs, parameters);
+% x_dot_e = f_cont_fun(x1, inputs, parameters);
 
 
 

@@ -1,4 +1,4 @@
-close all
+% close all
 %%
 %constants
 m=1400;
@@ -16,6 +16,7 @@ lr=1.4;
 rw=0.5;
 J = 100;
 dt = 0.05;
+g = 9.81
 parameters = [m Izz J lf lr rw];
 % 
 % %slip angle functions in degrees
@@ -41,12 +42,14 @@ v_ = [];
 r_ = [];
 w_ = [];
 
-states = [0;0;0;10;0;0;0];
-delta = [repmat(0.2, 1,250),repmat(-0.2, 1,250)];
+states = [0;0;0;20;0;0;40];
+delta = [repmat(0.2, 1,50),repmat(0.2, 1, 250)];
+T_d = 2000;
 
-T_d = 0;
-
-for i=1:500
+figure(1)
+p_ = plot([0;0]);
+figure(2)
+for i=1:300
     x = states(1);
     y = states(2);
     h = states(3);
@@ -78,32 +81,34 @@ for i=1:500
     b_f=(w+0.0001)/(u_f/rw+0.0001)-1;
     b_r=(w+0.0001)/(u/rw+0.0001)-1;
 
+%     b_f = (w-u_f+0.0001)/max(sqrt((w+0.0001)^2), sqrt((u_f+0.0001)^2));
+%     b_r = (w-u+0.0001)/max(sqrt((w+0.0001)^2), sqrt((u+0.0001)^2));
     %slip angle 
-    a_f= -atan(v_f/sqrt(u_f+0.05)^2);
-    a_r= -atan(vr/sqrt(u+0.05)^2);
+    a_f= -atan(v_f/sqrt((u_f+0.05)^2));
+    a_r= -atan(vr/sqrt((u+0.05)^2));
 
     %Nonlinear Tire Dynamics
     F_zf=lr/(lf+lr)*m*g;
     F_zr=lf/(lf+lr)*m*g;
+%     
+%     phi_yf=(1-Ey)*(a_f)+(Ey/By)*atan(By*(a_f));
+%     phi_yr=(1-Ey)*(a_r)+(Ey/By)*atan(By*(a_r));
+%     
+%     phi_xf=(1-Ex)*(b_f)+(Ex/Bx)*atan(Bx*(b_f));
+%     phi_xr=(1-Ex)*(b_r)+(Ex/Bx)*atan(Bx*(b_r));
+%     
     
-    phi_yf=(1-Ey)*(a_f)+(Ey/By)*atan(By*(a_f));
-    phi_yr=(1-Ey)*(a_r)+(Ey/By)*atan(By*(a_r));
-    
-    phi_xf=(1-Ex)*(b_f)+(Ex/Bx)*atan(Bx*(b_f));
-    phi_xr=(1-Ex)*(b_r)+(Ex/Bx)*atan(Bx*(b_r));
-    
-    
-    F_yfw=F_zf*Dy*sin(Cy*atan(By*phi_yf));
-    F_yr=F_zr*Dy*sin(Cy*atan(By*phi_yr));
-    
-    F_xfw=F_zf*Dy*sin(Cy*atan(By*phi_xf));
-    F_xr=F_zr*Dy*sin(Cy*atan(By*phi_xr));
+%     F_yfw=F_zf*Dy*sin(Cy*atan(By*phi_yf));
+%     F_yr=F_zr*Dy*sin(Cy*atan(By*phi_yr));
+%     
+%     F_xfw=F_zf*Dy*sin(Cy*atan(By*phi_xf));
+%     F_xr=F_zr*Dy*sin(Cy*atan(By*phi_xr));
 % 
-%     F_yfw = F_zf*5.3762*a_f;
-%     F_yr = F_zr*5.3762*a_r;
-% 
-%     F_xfw = F_zf*6.7130*b_f;
-%     F_xr = F_zr*6.7130*b_r;
+    F_yfw = F_zf*6.4762*a_f;
+    F_yr = F_zr*9.95*a_r;
+
+    F_xfw = F_zf*6.4130*b_f;
+    F_xr = F_zr*9.95*b_r;
 
     f = [u*cos(h)-v*sin(h);  %x
          u*sin(h)+v*cos(h);  %y
@@ -111,7 +116,9 @@ for i=1:500
          1/m*(cos(delta(i))*F_xfw-sin(delta(i))*F_yfw+F_xr)+v*r;
          1/m*(sin(delta(i))*F_xfw+cos(delta(i))*F_yfw+F_yr)-u*r;
          (lf*(sin(delta(i))*F_xfw+cos(delta(i))*F_yfw) - lr * F_yr)/Izz;
-         (T_d-rw*F_xfw-rw*F_xr)/J]
+         (T_d-rw*F_xfw-rw*F_xr-80*w)/J];
+    
+    f(end)
     
      
     states = states +f*dt;
@@ -122,12 +129,16 @@ for i=1:500
     v_(end+1) = states(5);
     r_(end+1) = states(6);
     w_(end+1) = states(7);
+    p_.YData = [p_.YData states(4)];
     
 %     if mod(i,10) == 0
-        plot_state([states(1) states(2) states(3)], 'r', 'x_0');
-        drawnow
-        axis equal
-
+    plot_state([states(1) states(2) states(3)], 'r', 'x_0');
+    drawnow
+    axis equal
+    if i == 51
+        a = 1;
+    end
+    
 %     end
     hold on
     
