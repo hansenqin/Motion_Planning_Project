@@ -43,7 +43,7 @@ a = A\b;
 y_fun = @(x) a(1)*x.^3 + a(2)*x.^2 + a(3)*x + a(4);
 dydx_fun = @(x) 3*a(1)*x.^2 + 2*a(2)*x.^1 + a(3);
 
-x_pts = 1:0.01:x2;
+x_pts = 0:0.01:x2;
 y_pts = y_fun(x_pts);
 h_pts = atan(dydx_fun(x_pts));  
 total_sum = 0;
@@ -89,7 +89,7 @@ h_old = h_new;
 while x_new < x2
     
     xyh_list(:,end+1) = [x_new; y_new; h_new];
-    uvr_list(:,end+1) = [u1;0;(h_new-h_old)/dt*1.1];
+    uvr_list(:,end+1) = [u1;0;(h_new-h_old)/dt*1.0];
     
     distance = u1*dt;
     u1 = u1+dudx*distance;
