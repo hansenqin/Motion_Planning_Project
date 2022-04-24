@@ -1,0 +1,40 @@
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
+[35m[1mScanning dependencies of target _A_star_generate_messages_check_deps_trajectory_info[0m
+[35m[1mScanning dependencies of target A_star_node[0m
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[ 11%] [32mBuilding CXX object CMakeFiles/A_star_node.dir/src/A_star_node.cpp.o[0m
+[ 11%] Built target _A_star_generate_messages_check_deps_trajectory_info
+[35m[1mScanning dependencies of target A_star_generate_messages_eus[0m
+[35m[1mScanning dependencies of target A_star_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target A_star_generate_messages_nodejs[0m
+[35m[1mScanning dependencies of target A_star_generate_messages_py[0m
+[35m[1mScanning dependencies of target A_star_generate_messages_cpp[0m
+[ 77%] [34m[1mGenerating Lisp code from A_star/trajectory_info.msg[0m
+[ 77%] [34m[1mGenerating EusLisp code from A_star/trajectory_info.msg[0m
+[ 77%] [34m[1mGenerating EusLisp manifest code for A_star[0m
+[ 77%] [34m[1mGenerating Python from MSG A_star/trajectory_info[0m
+[ 77%] [34m[1mGenerating C++ code from A_star/trajectory_info.msg[0m
+[ 77%] [34m[1mGenerating Javascript code from A_star/trajectory_info.msg[0m
+[ 77%] Built target A_star_generate_messages_lisp
+[ 77%] Built target A_star_generate_messages_nodejs
+WARNING: Package name "A_star" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "A_star" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+[ 77%] Built target A_star_generate_messages_cpp
+WARNING: Package name "A_star" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "A_star" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "A_star" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+[ 88%] [34m[1mGenerating Python msg __init__.py for A_star[0m
+[ 88%] Built target A_star_generate_messages_eus
+[ 88%] Built target A_star_generate_messages_py
+[35m[1mScanning dependencies of target A_star_generate_messages[0m
+[ 88%] Built target A_star_generate_messages
+[100%] [32m[1mLinking CXX executable /home/hansen/Desktop/Motion_Planning_Project/catkin_ws/devel/.private/A_star/lib/A_star/A_star_node[0m
+[100%] Built target A_star_node

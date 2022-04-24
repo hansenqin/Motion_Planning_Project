@@ -1,0 +1,4 @@
+[35m[1mScanning dependencies of target A_star_node[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/A_star_node.dir/src/A_star_node.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/hansen/Desktop/Motion_Planning_Project/catkin_ws/devel/.private/A_star/lib/A_star/A_star_node[0m
+[100%] Built target A_star_node

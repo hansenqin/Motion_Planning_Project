@@ -1,0 +1,13 @@
+[35m[1mScanning dependencies of target A_star_node[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/A_star_node.dir/src/A_star_node.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/hansen/Desktop/Motion_Planning_Project/catkin_ws/devel/.private/A_star/lib/A_star/A_star_node[0m
+/usr/bin/ld: CMakeFiles/A_star_node.dir/src/A_star_node.cpp.o: in function `main':
+A_star_node.cpp:(.text+0x95): undefined reference to `ros::init(int&, char**, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)'
+/usr/bin/ld: A_star_node.cpp:(.text+0x127): undefined reference to `ros::NodeHandle::NodeHandle(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&)'
+/usr/bin/ld: A_star_node.cpp:(.text+0x14a): undefined reference to `ros::spin()'
+/usr/bin/ld: A_star_node.cpp:(.text+0x159): undefined reference to `ros::NodeHandle::~NodeHandle()'
+/usr/bin/ld: A_star_node.cpp:(.text+0x1f5): undefined reference to `ros::NodeHandle::~NodeHandle()'
+collect2: error: ld returned 1 exit status
+make[2]: *** [CMakeFiles/A_star_node.dir/build.make:84: /home/hansen/Desktop/Motion_Planning_Project/catkin_ws/devel/.private/A_star/lib/A_star/A_star_node] Error 1
+make[1]: *** [CMakeFiles/Makefile2:155: CMakeFiles/A_star_node.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

@@ -1,0 +1,1 @@
+A_star/trajectory_info[] state_lattice

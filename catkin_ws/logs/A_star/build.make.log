@@ -1,0 +1,21 @@
+[35m[1mScanning dependencies of target _A_star_generate_messages_check_deps_state_lattice[0m
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_eus
+[ 14%] Built target A_star_node
+[ 14%] Built target _A_star_generate_messages_check_deps_trajectory_info
+[ 14%] Built target _A_star_generate_messages_check_deps_state_lattice
+[ 50%] [34m[1mGenerating EusLisp code from A_star/state_lattice.msg[0m
+[ 50%] [34m[1mGenerating C++ code from A_star/state_lattice.msg[0m
+[ 50%] [34m[1mGenerating Javascript code from A_star/state_lattice.msg[0m
+[ 50%] [34m[1mGenerating Python from MSG A_star/state_lattice[0m
+[ 50%] [34m[1mGenerating Lisp code from A_star/state_lattice.msg[0m
+[ 57%] Built target A_star_generate_messages_lisp
+[ 64%] Built target A_star_generate_messages_nodejs
+[ 78%] Built target A_star_generate_messages_eus
+[ 85%] Built target A_star_generate_messages_cpp
+[ 92%] [34m[1mGenerating Python msg __init__.py for A_star[0m
+[100%] Built target A_star_generate_messages_py
+[100%] Built target A_star_generate_messages
