@@ -49,7 +49,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   DIRECTORY msg
-  FILES trajectory_info.msg state_lattice.msg 
+  FILES trajectory_info.msg state_lattice.msg friction_map.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -105,7 +105,7 @@ catkin_package(
 #  LIBRARIES A_star
 #  CATKIN_DEPENDS roscpp std_msgs
 #  DEPENDS system_lib
-CATKIN_DEPENDS std_msgs message_runtime
+CATKIN_DEPENDS std_msgs roscpp message_runtime
 )
 
 ###########
