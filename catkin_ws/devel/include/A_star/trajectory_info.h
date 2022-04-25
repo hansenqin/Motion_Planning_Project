@@ -1,1 +1,0 @@
-/home/hansen/Desktop/Motion_Planning_Project/catkin_ws/devel/.private/A_star/include/A_star/trajectory_info.h

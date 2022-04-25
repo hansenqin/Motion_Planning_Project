@@ -1,1 +1,9 @@
 *.asv
+*.log
+*.stderr
+*devel*
+*build*
+*log*
+*.json
+*catkin_tools*
+
