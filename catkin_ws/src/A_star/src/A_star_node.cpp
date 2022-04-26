@@ -89,12 +89,16 @@ void A_star_planner::friction_map_cb(const A_star::friction_map& msg){
     int length = frictions.size()/width;
 
     int counter = 0;
+    std::cout<<"displaying friction map values: "<<std::endl;
     for(int i=0; i<length; i++){
         for(int j=0; j<width; j++){
             friction_map[i][j] = frictions[counter];
+            std::cout<<frictions[counter]<<" ";
             counter++;
         }
+        std::cout<<" "<<std::endl;
     }
+    std::cout<<"finished loading friction map!"<<std::endl;
     return;
 }
 
@@ -163,7 +167,7 @@ int main(int argc, char** argv){
     std::cout<<"started A star node"<<std::endl;
 
     ros::NodeHandle nh;
-    A_star_planner planner;
+    A_star_planner planner(3, 10, 6, 30);
     ros::Subscriber sub_friction = nh.subscribe("/friction_map", 1, &A_star_planner::friction_map_cb, &planner);
     ros::Subscriber sub_state_lattice = nh.subscribe("/state_lattice", 1, &A_star_planner::state_lattice_cb, &planner);
     ros::spin();

@@ -34,26 +34,20 @@ public:
 
     int min_speed;
     int max_speed;
-    int num_speed_intervals = 5;
+    int num_speed_intervals = 4;
     std::vector<double> u_vec;
 
     //Constructors
     A_star_planner(){};
     A_star_planner(int width, int length, int min_speed_, int max_speed_):
-        friction_map(width, std::vector<double>(length, 1)),
+        friction_map(length, std::vector<double>(width, 1.0)),
         min_speed(min_speed_),
         max_speed(max_speed_){
             double speed_interval = (max_speed-min_speed)/num_speed_intervals;
             for(double i=0; i <= num_speed_intervals; i++){
                 u_vec.push_back(min_speed+speed_interval*i);
             }
-
         }
-    
-    // void init_subscribers(){
-    //     sub_friction_map = nh.subscribe("/friction_map", 1, &A_star_planner::friction_map_cb, this);
-    //     ub_state_lattice = nh.subscribe("/state_lattics", 1, &A_star_planner::state_lattics_cb, this);
-    // }
 
     std::vector<std::string> search(int curr_x, int curr_y, double curr_u);
     std::vector<Node> get_neighbors(const Node& curr_node);

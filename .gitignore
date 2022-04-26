@@ -7,4 +7,5 @@
 *.json
 *catkin_tools*
 *.txt
+catkin_ws/src/matlab_msg_gen_ros1/
 
