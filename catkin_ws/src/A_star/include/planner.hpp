@@ -28,19 +28,20 @@ public:
     std::unordered_map<std::string, Node> node_map;
     std::vector<std::string> final_trajectories;
 
-    std::unordered_set<std::string> closed_set;
+    std::unordered_map<std::string, Node> closed_set;
     std::priority_queue<Node, std::vector<Node>, Compare> open_set;
     std::vector<int> goal;
 
     int min_speed;
     int max_speed;
-    int num_speed_intervals = 4;
+    int num_speed_intervals;
     std::vector<double> u_vec;
 
     //Constructors
     A_star_planner(){};
-    A_star_planner(int width, int length, int min_speed_, int max_speed_):
+    A_star_planner(int width, int length, int min_speed_, int max_speed_, int num_speed_intervals_):
         friction_map(length, std::vector<double>(width, 1.0)),
+        num_speed_intervals(num_speed_intervals_),
         min_speed(min_speed_),
         max_speed(max_speed_){
             double speed_interval = (max_speed-min_speed)/num_speed_intervals;

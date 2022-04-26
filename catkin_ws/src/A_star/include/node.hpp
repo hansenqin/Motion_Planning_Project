@@ -12,7 +12,7 @@ struct Node{
     Node(int x_, int y_, double u_): x(x_), y(y_), u(u_){}
 
     std::string get_key() const {
-        return std::to_string(x)+std::to_string(y)+std::to_string(u);
+        return std::to_string(x)+"-"+std::to_string(y)+"-"+sstd::to_string(int(u));
     }
 
 };
