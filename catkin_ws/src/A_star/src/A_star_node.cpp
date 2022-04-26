@@ -61,12 +61,20 @@ bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node,
 
     // auto curr_trajectory = trajectory_map[trajectory_index];
 
-    // int parent_x_idx = static_cast<int>(parent_node.x/4);
-    // int parent_y_idx = static_cast<int>(parent_node.y/4);
-    // int child_x_idx = static_cast<int>(child_node.x/4);
-    // int child_y_idx = static_cast<int>(child_node.y/4);
+    int parent_x_idx = static_cast<int>((parent_node.x+4)/4);
+    int parent_y_idx = static_cast<int>(parent_node.y/50);
+    int child_x_idx = static_cast<int>((parent_node.x+4)/4);
+    int child_y_idx = static_cast<int>(child_node.y/50);
 
-    // double friction = std::min(friction_map[parent_x_idx][parent_y_idx], friction_map[child_x_idx][child_y_idx]);
+    double friction = std::min(friction_map[parent_y_idx][parent_x_idx], friction_map[child_y_idx][child_x_idx]);
+
+    // std::cout<<"DEBUG: friction is: "<<friction<<std::endl;
+    // std::cout<<"DEBUG: parent_y_idx is: "<<parent_y_idx<<std::endl;
+    // std::cout<<"DEBUG: parent_x_idx is: "<<parent_x_idx<<std::endl;
+    if(friction < 0){
+        std::cout<<"DEBUG: OBSTACLE"<<std::endl;
+        return false;
+    } 
 
     return true;
 
@@ -116,13 +124,13 @@ void A_star_planner::friction_map_cb(const A_star::friction_map& msg){
 }
 
 void A_star_planner::state_lattice_cb(const A_star::state_lattice& msg){
-    trajectory_map.clear();
     std::cout<<"recieved state lattice!"<<std::endl;
     std::vector<A_star::trajectory_info> trajectory_list;
 
     for(A_star::trajectory_info traj: msg.state_lattice){
         std::string key = get_trajectory_key(traj);
         trajectory_map[key] = traj;
+
     }
     std::cout<<"Finished loading state lattice! Totaling "<<trajectory_map.size()<<" trajectories."<<std::endl;
     return;
@@ -159,6 +167,8 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
             neighbor.h_cost = get_hcost(neighbor);
             neighbor.prev = prev;
             open_set.push(neighbor);
+            // std::cout<<"DEBUG: neighbor.u = "<<neighbor.u<<std::endl;
+            // std::cout<<"DEBUG: neighbor.g_cost = "<<neighbor.g_cost<<std::endl;
             
         }
     }
