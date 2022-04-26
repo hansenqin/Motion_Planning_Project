@@ -59,9 +59,9 @@ F_zr=lf/(lf+lr)*m*g;
 %     F_xr=F_zr*Dy*sin(Cy*atan(By*phi_xr));
 % 
 F_yfw = F_zf*6.4762*a_f;
-F_yr = F_zr*9.95*a_r;
+F_yr = F_zr*6.4762*a_r;
 
-F_xfw = F_zf*6.4130*b_f;
+F_xfw = F_zf*9.95*b_f;
 F_xr = F_zr*9.95*b_r;
 
 f = [u*cos(h)-v*sin(h);  %x

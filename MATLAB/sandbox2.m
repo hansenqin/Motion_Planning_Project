@@ -105,9 +105,9 @@ while x_new < x2
 end
 
 scatter(xyh_list(1,:), xyh_list(2,:));
-% figure
-% 
-% scatter(xyh_list(1,:), u_list);
+figure
+
+scatter(xyh_list(1,:), u_list);
 
 
 %% find control inputs

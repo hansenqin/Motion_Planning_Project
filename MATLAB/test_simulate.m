@@ -76,28 +76,28 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
         %     F_xr=F_zr*Dy*sin(Cy*atan(By*phi_xr));
         % 
         F_yfw = F_zf*6.4762*a_f;
-        F_yr = F_zr*9.95*a_r;
+        F_yr = F_zr*6.4762*a_r;
     
-        F_xfw = F_zf*6.4130*b_f;
+        F_xfw = F_zf*9.95*b_f;
         F_xr = F_zr*9.95*b_r;
         
-        F_yfw_max = max(abs(F_zf*6.4762*a_f), F_yfw_max);
-        F_yr_max = max(abs(F_zr*9.95*a_r), F_yr_max);
+        F_yfw_max = max(abs(F_yfw), F_yfw_max);
+        F_yr_max = max(abs(F_yr), F_yr_max);
     
-        F_xfw_max = max(abs(F_zf*6.4130*b_f), F_xfw_max);
-        F_xr_max = max(abs(F_zr*9.95*b_r), F_xr_max);
+        F_xfw_max = max(abs(F_xfw), F_xfw_max);
+        F_xr_max = max(abs(F_xr), F_xr_max);
         
         states = f_cont_fun(states, [inputs_list(1,i); inputs_list(2,i)], parameters)*dt+states;
         
         
-%         if mod(i,1)==0
-%             plot_state([states(1) states(2) states(3)], 'r', 'x_0');
-%             states(4)
-%             drawnow
-%         end
-%     %     end
-%         hold on
-%         ylim([-10, 10])
+        if mod(i,1)==0
+            plot_state([states(1) states(2) states(3)], 'r', 'x_0');
+            states(4)
+            drawnow
+        end
+    %     end
+        hold on
+        ylim([-10, 10])
         
     end
 end

@@ -83,8 +83,8 @@ function [xyh_list, uvr_list] = get_xyhuvr( x1, u1, u2, total_distance, a, dt)
         h_new = atan(dydx_fun(x_new));
 
     end
-%     hold on
-%     scatter(xyh_list(1,:), xyh_list(2,:));
+    hold on
+    scatter(xyh_list(1,:), xyh_list(2,:));
 end
 
 function inputs_list = get_control_inputs(xyh_list, uvr_list, dt)
