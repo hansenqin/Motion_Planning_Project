@@ -1,7 +1,7 @@
 function [inputs_list, total_distance, reference_traj] = generate_trajectories(x1, y1, u0, u1, dt)
     [a, total_distance] = get_spline(x1, y1);
     [xyh_list, uvr_list] = get_xyhuvr(x1, u0, u1, total_distance, a, dt);
-    reference_traj = [xyh_list' uvr_list'];
+    reference_traj = [xyh_list' uvr_list', 2*uvr_list(1,:)'];
     inputs_list = get_control_inputs(xyh_list, uvr_list, dt);
     
 end
@@ -83,19 +83,27 @@ function [xyh_list, uvr_list] = get_xyhuvr( x1, u1, u2, total_distance, a, dt)
         h_new = atan(dydx_fun(x_new));
 
     end
-    hold on
-    scatter(xyh_list(1,:), xyh_list(2,:));
+%     hold on
+%     scatter(xyh_list(1,:), xyh_list(2,:));
 end
 
 function inputs_list = get_control_inputs(xyh_list, uvr_list, dt)
     m=1400;
     Izz=2667;
-    lf=1.35;
-    lr=1.45;
+    By=0.13*180/pi;
+    Cy=1.3;
+    Dy=0.7;
+    Ey=-1.6;
+    Bx=0.20*180/pi;
+    Cx=1.3;
+    Dx=0.7;
+    Ex=-1.6;
+    lf=1.4;
+    lr=1.4;
     rw=0.5;
     J = 100;
-    dt = 0.1;
-    parameters = [m Izz J lf lr rw]; 
+    g = 9.81;
+    parameters = [m; Izz; J; Dy; Cy; By; Ey; Dx; Cx; Bx; Ex; lf; lr; rw]; 
 
     T_est = (uvr_list(1,2)-uvr_list(1,1))/dt*m*2;
     % T_est = -1000000;

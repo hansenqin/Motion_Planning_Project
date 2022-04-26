@@ -33,15 +33,15 @@ function u_ = MPC(curr_state, Y, U)
     
     W = [];
     
-    Q = [10,    0,  0, 0, 0, 0, 0;
-         0,    10,  0, 0, 0, 0, 0;
-         0,     0, 10, 0, 0, 0, 0;
+    Q = [1,    0,  0, 0, 0, 0, 0;
+         0,    1,  0, 0, 0, 0, 0;
+         0,     0, 100, 0, 0, 0, 0;
          0,     0,  0, 10,0, 0, 0;
-         0,     0,  0, 0, 10, 0, 0;
-         0,     0,  0, 0, 0, 10, 0
+         0,     0,  0, 0, 0, 0, 0;
+         0,     0,  0, 0, 0, 100, 0
          0,     0,  0, 0, 0, 0, 10];
-    R = [0.005, 0;
-         0, 10];
+    R = [10, 0;
+         0, 100];
      
     Q_bar = blkdiag(1000*kron(eye(N-1),Q),1000*Q);
     R_bar = blkdiag(10*kron(eye(N),R));
@@ -53,7 +53,7 @@ function u_ = MPC(curr_state, Y, U)
     %% Solve MPC
     
     [S, M, G, T] = construct_QPMPC_mats(A_cell(1:1+N-1), B_cell(1:1+N-1), num_states, num_inputs, N);
-    U = qp_mpc(Q_bar, R_bar, S, M, G, T, W, x0 - Y_used(1,:)', options, num_inputs);
+    U = qp_mpc(Q_bar, R_bar, S, M, G, T, W, x0' - Y_used(1,:)', options, num_inputs);
 % 
 %     v_ = U(1:num_inputs,1);
 %     u_ = v_ + U_used(1,:)';

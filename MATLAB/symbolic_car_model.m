@@ -13,8 +13,8 @@ states = [x;y;h;u;v;r;w];
 inputs = [T_d;delta];
 
 % Store any physical parameters needed here e.g. mass, lengths...
-% parameters = [m; Izz; J; Dy; Cy; By; Ey; Dx; Cx; Bx; Ex; lf; lr; rw]; 
-parameters = [m Izz J lf lr rw]; 
+parameters = [m; Izz; J; Dy; Cy; By; Ey; Dx; Cx; Bx; Ex; lf; lr; rw]; 
+% parameters = [m Izz J lf lr rw]; 
 
 % Define the dynamics
 
@@ -51,7 +51,7 @@ F_zr=lf/(lf+lr)*m*g;
 %     phi_xf=(1-Ex)*(b_f)+(Ex/Bx)*atan(Bx*(b_f));
 %     phi_xr=(1-Ex)*(b_r)+(Ex/Bx)*atan(Bx*(b_r));
 %     
-
+% 
 %     F_yfw=F_zf*Dy*sin(Cy*atan(By*phi_yf));
 %     F_yr=F_zr*Dy*sin(Cy*atan(By*phi_yr));
 %     

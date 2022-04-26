@@ -1,6 +1,6 @@
 close all
 % clear
-dt = 0.1;
+dt = 0.05;
 % u1 = 5;
 % u2 = 30;
 % inputs_list = generate_trajectories(100, 7, u1, u2, dt);
@@ -8,34 +8,40 @@ SL_msg = rosmessage('A_star/state_lattice');
 friction_msg = rosmessage('A_star/friction_map');
 
 friction_msg.Frictions = repmat(2,30,1);
+friction_msg.Frictions(10) = -1;
 friction_msg.Frictions(11) = -1;
+
+friction_msg.Frictions(18) = -1;
+friction_msg.Frictions(19) = -1;
+
 [friction_pub, ~] = rospublisher('/friction_map', 'A_star/friction_map');
 [SL_pub, ~] = rospublisher('/state_lattice', 'A_star/state_lattice');
 
-[SL_msg,M] = publish_trajectories(dt, SL_msg);
+[SL_msg,M1, M2] = publish_trajectories(dt, SL_msg);
 % send(SL_pub, SL_msg);
 % send(friction_pub, friction_msg);
 
 
-traj_key_sub = rossubscriber('/trajectory_keys', 'A_star/trajectory_keys', @(pub, msg) trajectory_cb(msg, M));
+traj_key_sub = rossubscriber('/trajectory_keys', 'A_star/trajectory_keys', @(pub, msg) trajectory_cb(msg, M1, M2));
 
 
-function trajectory_cb(msg, M)
+function trajectory_cb(msg, M1, M2)
 %TODO: change this:
-    states = [0;0;0;18;0;0;36];
-    simulate(states, msg, M)
+    states = [0;0;0;11;0;0;22];
+    simulate(states, msg, M1, M2)
 
 end
 
-function [SL_msg, M] = publish_trajectories(dt, SL_msg)
+function [SL_msg, M1, M2] = publish_trajectories(dt, SL_msg)
     u1 = 6;
-    u2 = 30;
+    u2 = 16;
     speeds = linspace(u1,u2,3);
     dx = [-4 0 4];
     dy = 50;
     traj_msg = rosmessage('A_star/trajectory_info');
     key_set = [""];
-    value_set = {traj_msg};
+    value_set1 = {traj_msg};
+    value_set2 = {0};
 %     M = containers.Map("KeyType","string","ValueType","trajectory_info");
 
     for k=1:length(speeds)
@@ -60,7 +66,8 @@ function [SL_msg, M] = publish_trajectories(dt, SL_msg)
                 traj_msg.Length = total_distance;
 
                 key_set(end+1) = strcat(int2str(dx(j)),"-",int2str(dy),"-",int2str(speeds(k)),"-",int2str(speeds(i)));
-                value_set(end+1) = {traj_msg};
+                value_set1(end+1) = {traj_msg};
+                value_set2(end+1) = {reference_traj};
 
 
                 
@@ -68,7 +75,8 @@ function [SL_msg, M] = publish_trajectories(dt, SL_msg)
             end
         end
     end
-    M = containers.Map(key_set,value_set);
+    M1 = containers.Map(key_set,value_set1);
+    M2 = containers.Map(key_set,value_set2);
 
 
 end

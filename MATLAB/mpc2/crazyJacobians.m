@@ -152,8 +152,8 @@ load_constants
     J_A = vpa(jacobian(x_dot, [x y h u v r w]),3);
     J_B = vpa(jacobian(x_dot, [Td delta]),3);
     
-    Ad = eye(length(J_A)) + 0.1*J_A;
-    Bd = 0.1*J_B;
+    Ad = eye(length(J_A)) + 0.05*J_A;
+    Bd = 0.05*J_B;
     
     Ad_ = matlabFunction(Ad, 'Vars', {[x y h u v r w Td delta]});
     Bd_ = matlabFunction(Bd, 'Vars', {[x y h u v r w Td delta]});

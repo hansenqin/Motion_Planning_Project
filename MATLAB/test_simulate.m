@@ -2,20 +2,20 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
     
     m=1400;
     Izz=2667;
-    By=0.07*180/pi;
+    By=0.13*180/pi;
     Cy=1.3;
     Dy=0.7;
     Ey=-1.6;
-    Bx=0.27*180/pi;
+    Bx=0.20*180/pi;
     Cx=1.3;
     Dx=0.7;
     Ex=-1.6;
-    lf=1.35;
-    lr=1.45;
+    lf=1.4;
+    lr=1.4;
     rw=0.5;
     J = 100;
     g = 9.81;
-    parameters = [m Izz J lf lr rw]; 
+    parameters = [m; Izz; J; Dy; Cy; By; Ey; Dx; Cx; Bx; Ex; lf; lr; rw]; 
     
     
     states = [0;0;0;u1;0;0;2*u1];
@@ -90,15 +90,15 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
         states = f_cont_fun(states, [inputs_list(1,i); inputs_list(2,i)], parameters)*dt+states;
         
         
-        if mod(i,1)==0
-            plot_state([states(1) states(2) states(3)], 'r', 'x_0');
-            states(4)
-            drawnow
-        end
-    %     end
-        hold on
-        ylim([-10, 10])
-        
+%         if mod(i,1)==0
+%             plot_state([states(1) states(2) states(3)], 'r', 'x_0');
+%             states(4)
+%             drawnow
+%         end
+%     %     end
+%         hold on
+%         ylim([-10, 10])
+% %         
     end
 end
     

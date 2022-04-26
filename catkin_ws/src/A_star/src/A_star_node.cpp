@@ -119,11 +119,12 @@ void A_star_planner::friction_map_cb(const A_star::friction_map& msg){
         std::cout<<" "<<std::endl;
     }
     std::cout<<"finished loading friction map!"<<std::endl;
-    auto trajectory_to_send = A_star_planner::search(0, 0, 18);
+    auto trajectory_to_send = A_star_planner::search(0, 0, 11);
     return;
 }
 
 void A_star_planner::state_lattice_cb(const A_star::state_lattice& msg){
+    trajectory_map.clear();
     std::cout<<"recieved state lattice!"<<std::endl;
     std::vector<A_star::trajectory_info> trajectory_list;
 
@@ -202,7 +203,7 @@ int main(int argc, char** argv){
     int map_width = 3;
     int map_length = 10;
     int min_speed = 6;
-    int max_speed = 30;
+    int max_speed = 16;
     int speed_intervals = 2;
 
 
