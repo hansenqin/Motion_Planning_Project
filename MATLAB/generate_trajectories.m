@@ -1,6 +1,7 @@
-function [inputs_list, total_distance] = generate_trajectories(x1, y1, u0, u1, dt)
+function [inputs_list, total_distance, reference_traj] = generate_trajectories(x1, y1, u0, u1, dt)
     [a, total_distance] = get_spline(x1, y1);
     [xyh_list, uvr_list] = get_xyhuvr(x1, u0, u1, total_distance, a, dt);
+    reference_traj = [xyh_list' uvr_list'];
     inputs_list = get_control_inputs(xyh_list, uvr_list, dt);
     
 end

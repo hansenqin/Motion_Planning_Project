@@ -4,17 +4,15 @@ dt = 0.1;
 % u1 = 5;
 % u2 = 30;
 % inputs_list = generate_trajectories(100, 7, u1, u2, dt);
-
-% SL_msg = rosmessage('A_star/state_lattice');
-% friction_msg = rosmessage('A_star/friction_map');
+SL_msg = rosmessage('A_star/state_lattice');
+friction_msg = rosmessage('A_star/friction_map');
 
 friction_msg.Frictions = repmat(2,30,1);
 friction_msg.Frictions(11) = -1;
 [friction_pub, ~] = rospublisher('/friction_map', 'A_star/friction_map');
 [SL_pub, ~] = rospublisher('/state_lattice', 'A_star/state_lattice');
 
-
-% [SL_msg,M] = publish_trajectories(dt, SL_msg);
+[SL_msg,M] = publish_trajectories(dt, SL_msg);
 % send(SL_pub, SL_msg);
 % send(friction_pub, friction_msg);
 
@@ -44,7 +42,7 @@ function [SL_msg, M] = publish_trajectories(dt, SL_msg)
         for i=1:length(speeds)
             for j=1:length(dx)
 
-                [inputs_list, total_distance] = generate_trajectories(dy, dx(j), speeds(k), speeds(i), dt);
+                [inputs_list, total_distance, reference_traj] = generate_trajectories(dy, dx(j), speeds(k), speeds(i), dt);
                 [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, speeds(k), dt);
 
                 traj_msg = rosmessage('A_star/trajectory_info');
