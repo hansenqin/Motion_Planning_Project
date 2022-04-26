@@ -22,5 +22,6 @@ struct trajectory{
     double dy;
     double u1;
     double u2;
+    double length;
 
 };

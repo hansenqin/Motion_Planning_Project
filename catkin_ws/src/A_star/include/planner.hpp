@@ -24,7 +24,7 @@ public:
 class A_star_planner{
 public:
     std::vector<std::vector<double>> friction_map;
-    std::unordered_map<std::string, trajectory> trajectory_map;
+    std::unordered_map<std::string, A_star::trajectory_info> trajectory_map;
     std::unordered_map<std::string, Node> node_map;
     std::vector<std::string> final_trajectories;
 
@@ -39,7 +39,7 @@ public:
 
     //Constructors
     A_star_planner(){};
-    A_star_planner(int width, int length, int min_speed_, int max_speed_,ros::NodeHandle& nh_):
+    A_star_planner(int width, int length, int min_speed_, int max_speed_):
         friction_map(width, std::vector<double>(length, 1)),
         min_speed(min_speed_),
         max_speed(max_speed_){
@@ -58,12 +58,12 @@ public:
     std::vector<std::string> search(int curr_x, int curr_y, double curr_u);
     std::vector<Node> get_neighbors(const Node& curr_node);
     std::string get_trajectory_index(Node parent, Node child);
-    void set_trajectory_map();
-    void backtrack();
+    std::string get_trajectory_key(A_star::trajectory_info traj);
+    void backtrack(Node curr_node);
     double get_gcost(Node curr_node,std::string curr_trajectory_index);
     double get_hcost(Node curr_node);
     bool verify_traj(std::string trajectory_index, Node parent_node, Node child_node);
-    void friction_map_cb(const A_star::trajectory_info& msg);
+    void friction_map_cb(const A_star::friction_map& msg);
     void state_lattice_cb(const A_star::state_lattice& msg);
 
 };
