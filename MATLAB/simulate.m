@@ -16,6 +16,7 @@ function simulate(states, inputs,M)
             states = f_disc_fun(states,curr_inputs(j,:)',dt,params);
             plot_state([states(1) states(2) states(3)], 'r', 'x_0');
             hold on;
+            ylim([-10, 10])
             pause(dt);
         end
     end

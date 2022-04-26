@@ -90,14 +90,14 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
         states = f_cont_fun(states, [inputs_list(1,i); inputs_list(2,i)], parameters)*dt+states;
         
         
-        if mod(i,1)==0
-            plot_state([states(1) states(2) states(3)], 'r', 'x_0');
-            states(4)
-            drawnow
-        end
-    %     end
-        hold on
-        ylim([-10, 10])
+%         if mod(i,1)==0
+%             plot_state([states(1) states(2) states(3)], 'r', 'x_0');
+%             states(4)
+%             drawnow
+%         end
+%     %     end
+%         hold on
+%         ylim([-10, 10])
         
     end
 end
