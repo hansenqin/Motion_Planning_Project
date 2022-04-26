@@ -17,6 +17,13 @@ std::string A_star_planner::get_trajectory_key(A_star::trajectory_info traj){
     return std::to_string(int(traj.dx))+"-"+std::to_string(int(traj.dy))+"-"+std::to_string(int(traj.u1))+"-"+std::to_string(int(traj.u2));
 }
 
+void A_star_planner::reset(){
+    friction_map = std::vector<std::vector<double>>(length, std::vector<double>(width, 1.0));
+    final_trajectories.clear();
+    open_set = std::priority_queue<Node, std::vector<Node>, Compare>();
+    closed_set.clear();
+}
+
 std::vector<Node> A_star_planner::get_neighbors(const Node& curr_node){
     double curr_u = curr_node.u;
     double curr_x = curr_node.x;
@@ -71,6 +78,7 @@ void A_star_planner::backtrack(Node curr_node){
         final_trajectories.push_back(curr_node.trajectory_index);
         curr_node = closed_set[curr_node.prev];
     }
+    std::reverse(final_trajectories.begin(), final_trajectories.end());
 }
 
 double A_star_planner::get_gcost(Node curr_node, std::string curr_trajectory_index){
@@ -86,6 +94,7 @@ double A_star_planner::get_hcost(Node curr_node){
 }
 
 void A_star_planner::friction_map_cb(const A_star::friction_map& msg){
+    A_star_planner::reset();
     std::cout<<"recieved friction map!"<<std::endl;
     std::vector<double> frictions = msg.frictions;
     int width = 3;
@@ -102,6 +111,7 @@ void A_star_planner::friction_map_cb(const A_star::friction_map& msg){
         std::cout<<" "<<std::endl;
     }
     std::cout<<"finished loading friction map!"<<std::endl;
+    auto trajectory_to_send = A_star_planner::search(0, 0, 18);
     return;
 }
 
@@ -115,7 +125,6 @@ void A_star_planner::state_lattice_cb(const A_star::state_lattice& msg){
         trajectory_map[key] = traj;
     }
     std::cout<<"Finished loading state lattice! Totaling "<<trajectory_map.size()<<" trajectories."<<std::endl;
-    auto trajectory_to_send = A_star_planner::search(0, 0, 18);
     return;
 }
 
@@ -124,7 +133,6 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
 
     Node first_node(curr_x, curr_y, curr_u);
     // Node first_node;
-    node_map[first_node.get_key()] = first_node;
     open_set.push(first_node);
     std::string prev = ""; 
 
@@ -150,7 +158,6 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
             neighbor.g_cost = get_gcost(neighbor, curr_trajectory_index);
             neighbor.h_cost = get_hcost(neighbor);
             neighbor.prev = prev;
-            node_map[neighbor.get_key()] = neighbor;
             open_set.push(neighbor);
             
         }
@@ -166,10 +173,14 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
     backtrack(curr_node);
     std::cout<<"Done. Final trajecory has "<<final_trajectories.size()<<" trajectories."<<std::endl;
 
+    //Sending out stuff
+    std::cout<<"Ready to send trajectory keys..."<<std::endl;
+    A_star::trajectory_keys trajectory_keys_msg;
     for(auto traj: final_trajectories){
-        std::cout<<traj<<std::endl;
+        trajectory_keys_msg.trajectory_keys.push_back(traj);
     }
-
+    traj_key_pub_.publish(trajectory_keys_msg);
+    std::cout<<"Finished sending trajectory keys."<<std::endl;
     return final_trajectories;
 }
 
@@ -178,7 +189,14 @@ int main(int argc, char** argv){
     std::cout<<"started A star node"<<std::endl;
 
     ros::NodeHandle nh;
-    A_star_planner planner(3, 10, 6, 30, 2);
+    int map_width = 3;
+    int map_length = 10;
+    int min_speed = 6;
+    int max_speed = 30;
+    int speed_intervals = 2;
+
+
+    A_star_planner planner(nh, map_width, map_length, min_speed, max_speed, speed_intervals);
     planner.goal = {0, 450};
     ros::Subscriber sub_friction = nh.subscribe("/friction_map", 1, &A_star_planner::friction_map_cb, &planner);
     ros::Subscriber sub_state_lattice = nh.subscribe("/state_lattice", 1, &A_star_planner::state_lattice_cb, &planner);

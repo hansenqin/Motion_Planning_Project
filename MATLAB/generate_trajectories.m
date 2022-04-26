@@ -1,4 +1,4 @@
-function inputs_list = generate_trajectories(x1, y1, u0, u1, dt)
+function [inputs_list, total_distance] = generate_trajectories(x1, y1, u0, u1, dt)
     [a, total_distance] = get_spline(x1, y1);
     [xyh_list, uvr_list] = get_xyhuvr(x1, u0, u1, total_distance, a, dt);
     inputs_list = get_control_inputs(xyh_list, uvr_list, dt);
@@ -45,9 +45,12 @@ function [xyh_list, uvr_list] = get_xyhuvr( x1, u1, u2, total_distance, a, dt)
     f = a(1)*x^3+a(2)*x^2+a(3)*x+a(4);
     dfdx = diff(f,x);
     integrand = sqrt(1+dfdx^2);
-
-    I_fun = matlabFunction(integrand);
-
+    
+    I_fun = matlabFunction(integrand+0*x);
+    if sum(a==0)==4
+        I_fun = @(x)1+0*x;
+    end
+    
 
     xyh_list = [];
     uvr_list = [];
@@ -79,8 +82,8 @@ function [xyh_list, uvr_list] = get_xyhuvr( x1, u1, u2, total_distance, a, dt)
         h_new = atan(dydx_fun(x_new));
 
     end
-    hold on
-    scatter(xyh_list(1,:), xyh_list(2,:));
+%     hold on
+%     scatter(xyh_list(1,:), xyh_list(2,:));
 end
 
 function inputs_list = get_control_inputs(xyh_list, uvr_list, dt)

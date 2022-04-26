@@ -49,7 +49,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   DIRECTORY msg
-  FILES trajectory_info.msg state_lattice.msg friction_map.msg
+  FILES trajectory_info.msg state_lattice.msg friction_map.msg trajectory_keys.msg
 )
 
 ## Generate services in the 'srv' folder

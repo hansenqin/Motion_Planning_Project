@@ -9,6 +9,7 @@
 #include "A_star/state_lattice.h"
 #include "A_star/trajectory_info.h"
 #include "A_star/friction_map.h"
+#include "A_star/trajectory_keys.h"
 
 class Compare
 {
@@ -25,7 +26,6 @@ class A_star_planner{
 public:
     std::vector<std::vector<double>> friction_map;
     std::unordered_map<std::string, A_star::trajectory_info> trajectory_map;
-    std::unordered_map<std::string, Node> node_map;
     std::vector<std::string> final_trajectories;
 
     std::unordered_map<std::string, Node> closed_set;
@@ -35,12 +35,20 @@ public:
     int min_speed;
     int max_speed;
     int num_speed_intervals;
+    int length;
+    int width;
     std::vector<double> u_vec;
+    ros::NodeHandle& nh;
+    ros::Publisher traj_key_pub_;
 
     //Constructors
-    A_star_planner(){};
-    A_star_planner(int width, int length, int min_speed_, int max_speed_, int num_speed_intervals_):
+    // A_star_planner(){};
+    A_star_planner(ros::NodeHandle& nh_, int width_, int length_, int min_speed_, int max_speed_, int num_speed_intervals_):
+        length(length_),
+        width(width_),
         friction_map(length, std::vector<double>(width, 1.0)),
+        nh{nh_},
+        traj_key_pub_{nh.advertise<A_star::trajectory_keys>("/trajectory_keys", 10)},
         num_speed_intervals(num_speed_intervals_),
         min_speed(min_speed_),
         max_speed(max_speed_){
@@ -49,6 +57,8 @@ public:
                 u_vec.push_back(min_speed+speed_interval*i);
             }
         }
+
+
 
     std::vector<std::string> search(int curr_x, int curr_y, double curr_u);
     std::vector<Node> get_neighbors(const Node& curr_node);
@@ -60,5 +70,6 @@ public:
     bool verify_traj(std::string trajectory_index, Node parent_node, Node child_node);
     void friction_map_cb(const A_star::friction_map& msg);
     void state_lattice_cb(const A_star::state_lattice& msg);
+    void reset();
 
 };
