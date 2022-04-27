@@ -5,12 +5,14 @@ dt = 0.05;
 SL_msg = rosmessage('A_star/state_lattice');
 friction_msg = rosmessage('A_star/friction_map');
 
-friction_msg.Frictions = repmat(2,30,1);
+friction_msg.Frictions = repmat(4,30,1);
 friction_msg.Frictions(10) = -1;
 friction_msg.Frictions(11) = -1;
 
 friction_msg.Frictions(20) = -1;
 friction_msg.Frictions(21) = -1;
+% friction_msg.Frictions(22) = 2;
+% friction_msg.Frictions(5) = 2;
 
 [friction_pub, ~] = rospublisher('/friction_map', 'A_star/friction_map');
 [SL_pub, ~] = rospublisher('/state_lattice', 'A_star/state_lattice');
@@ -30,7 +32,10 @@ for i=0:world_length-1
         if(friction_msg.Frictions(i*world_width+j) == -1)
             [verts, faces] = gen_rect_points(curr_y, curr_x);
             obs = patch(verts(:,1), verts(:,2), 'k');
-            
+
+        elseif(friction_msg.Frictions(i*world_width+j) ~= 4)
+            [verts, faces] = gen_rect_points(curr_y, curr_x);
+            obs = patch(verts(:,1), verts(:,2), 'b');
         end
     end
 end

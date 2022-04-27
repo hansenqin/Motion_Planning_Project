@@ -5,34 +5,6 @@
 #include "planner.hpp"
 #include "allowed_forces.hpp"
 
-double dMF(double x, double B, double C, double D, double E){
-    return (C*D*cos(C*atan(B*x + E*(atan(B*x) - B*x)))*(B - E*(B - B/(B*B*x*x + 1))))/(pow((B*x + E*(atan(B*x) - B*x)),2) + 1);
-}
-
-double bin_search(double tolerance, double B, double C, double D, double E, double xi){
-    double left = 0;
-    double right = 0.15;
-    double pivot = 0;
-    int max_itr = 100;
-    int i=0;
-    while(i<max_itr){
-        pivot = (left+right)/2;
-        double curr_estimate = dMF(pivot, B, C, D, E) - dMF(0, B, C, D, E)*xi;
-
-        if(curr_estimate < tolerance){
-            return pivot;
-        }else if(curr_estimate > 0){
-            left = pivot;
-        }else if(curr_estimate < 0){
-            right = pivot;
-        }
-        i++;
-    }
-
-    return pivot;
-}
-
-
 std::string A_star_planner::get_trajectory_index(Node parent, Node child){
 
     int dx = child.x - parent.x;
@@ -57,6 +29,8 @@ std::vector<Node> A_star_planner::get_neighbors(const Node& curr_node){
     double curr_x = curr_node.x;
     double curr_y = curr_node.y;
     std::vector<Node> node_vec;
+    if(curr_node.y == 450) return node_vec;
+
     if(curr_x == 0){
         std::vector<int> x_pos_vec = {-4, 0, 4};
         for(auto x_pos:x_pos_vec){
@@ -84,10 +58,38 @@ std::vector<Node> A_star_planner::get_neighbors(const Node& curr_node){
     return node_vec;
 }
 
+double dMF(double x, double B, double C, double D, double E){
+    return (C*D*cos(C*atan(B*x + E*(atan(B*x) - B*x)))*(B - E*(B - B/(B*B*x*x + 1))))/(pow((B*x + E*(atan(B*x) - B*x)),2) + 1);
+
+}
+
+double bin_search(double tolerance, double B, double C, double D, double E, double xi){
+    double left = 0;
+    double right = 100;
+    double pivot = 0;
+    int max_itr = 100;
+    int i=0;
+    while(i<max_itr){
+        pivot = (left+right)/2;
+        double curr_estimate = dMF(pivot, B, C, D, E) - dMF(0, B, C, D, E)*xi;
+
+        if(abs(curr_estimate)< tolerance){
+            return pivot;
+        }else if(curr_estimate > 0){
+            left = pivot;
+        }else if(curr_estimate < 0){
+            right = pivot;
+        }
+        i++;
+    }
+    return pivot;
+}
+
+
 allowed_forces get_max_slip(double mu){
     double tolerance = 0.001;
     double pi = 3.14;
-    double xi = 0.5;
+    double xi = 0.1;
     double By=0.13*180/pi/mu;
     double Cy=1.3;
     double Dy=0.7*mu;
@@ -104,12 +106,12 @@ allowed_forces get_max_slip(double mu){
     double J = 100;
     double g = 9.81;
     int max_itr = 100;
-
+    
     double a_max = bin_search(tolerance, By, Cy, Dy, Ey, xi);
     double b_max = bin_search(tolerance, Bx, Cx, Dx, Ex, xi);
 
-    double Fx_max = lf/(lr+lf)*m*g;
-    double Fy_max = lf/(lr+lf)*m*g;
+    double Fx_max = lf/(lr+lf)*m*g*b_max;
+    double Fy_max = lf/(lr+lf)*m*g*a_max;
 
     return allowed_forces(Fx_max, Fy_max);
 }
@@ -119,12 +121,16 @@ bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node,
     //TODO:
 
     auto curr_trajectory = trajectory_map[trajectory_index];
-
     int parent_x_idx = static_cast<int>((parent_node.x+4)/4);
     int parent_y_idx = static_cast<int>(parent_node.y/50);
     int child_x_idx = static_cast<int>((parent_node.x+4)/4);
     int child_y_idx = static_cast<int>(child_node.y/50);
 
+    std::cout<<"DEBUG: friction_map size is: "<< friction_map.size()<<"x"<<friction_map[0].size()<<std::endl;
+    std::cout<<"parent_y_idx: "<< parent_y_idx<<std::endl;
+    std::cout<<"parent_x_idx: "<< parent_x_idx<<std::endl;
+    std::cout<<"child_y_idx:  "<< child_y_idx<<std::endl;
+    std::cout<<"child_x_idx:  "<< child_x_idx<<std::endl;
     double friction = std::min(friction_map[parent_y_idx][parent_x_idx], friction_map[child_y_idx][child_x_idx]);
 
     // std::cout<<"DEBUG: friction is: "<<friction<<std::endl;
@@ -135,7 +141,15 @@ bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node,
 
     allowed_forces max_forces = get_max_slip(friction);
 
+    std::cout<< "max_forces.F_x:           " << max_forces.F_x <<std::endl;
+    std::cout<< "curr_trajectory.max_F_xf: " << curr_trajectory.max_F_xf <<std::endl;
+
+    std::cout<< "max_forces.F_y:           " << max_forces.F_y <<std::endl;
+    std::cout<< "curr_trajectory.max_F_yf: " << curr_trajectory.max_F_yf <<std::endl;
+    std::cout<< " "<<std::endl;
+    
     if(max_forces.F_x <= curr_trajectory.max_F_xf || max_forces.F_y <= curr_trajectory.max_F_yf){
+        
         return false;
     }
 
@@ -145,7 +159,7 @@ bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node,
 
 void A_star_planner::backtrack(Node curr_node){
     while(curr_node.prev != ""){
-        std::cout<<"DEBUG: curr_node.prev = "<<curr_node.prev<<std::endl;
+        // std::cout<<"DEBUG: curr_node.prev = "<<curr_node.prev<<std::endl;
         final_trajectories.push_back(curr_node.trajectory_index);
         curr_node = closed_set[curr_node.prev];
     }
@@ -207,9 +221,14 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
     // Node first_node;
     open_set.push(first_node);
     std::string prev = ""; 
-
+    bool no_path_flag = 0;
 
     while(open_set.top().x != goal[0] || open_set.top().y != goal[1]){
+        if(open_set.empty()){
+            std::cout<<"NO PATH FOUND!!!"<<std::endl;
+            no_path_flag = 1;
+            break;
+        }
         auto curr_node = open_set.top();
         if(closed_set.find(curr_node.get_key())!=closed_set.end()) continue;
 
@@ -217,12 +236,12 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
             curr_node.trajectory_index = get_trajectory_index(closed_set[curr_node.prev], curr_node);
             std::cout<<"DEBUG: curr_node.trajectory_index = "<<curr_node.trajectory_index<<std::endl;
         }
+        
         closed_set[curr_node.get_key()] = curr_node;
         prev = curr_node.get_key();
         open_set.pop();
 
         auto neighbors = get_neighbors(curr_node);
-
         for(auto neighbor: neighbors){
             if(closed_set.find(neighbor.get_key())!=closed_set.end()) continue;
             auto curr_trajectory_index = get_trajectory_index(curr_node, neighbor);
@@ -231,10 +250,11 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
             neighbor.h_cost = get_hcost(neighbor);
             neighbor.prev = prev;
             open_set.push(neighbor);
-            // std::cout<<"DEBUG: neighbor.u = "<<neighbor.u<<std::endl;
-            // std::cout<<"DEBUG: neighbor.g_cost = "<<neighbor.g_cost<<std::endl;
-            
         }
+    }
+
+    if(no_path_flag){
+        return final_trajectories;
     }
 
     auto curr_node = open_set.top();

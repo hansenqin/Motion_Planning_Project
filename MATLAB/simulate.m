@@ -40,9 +40,9 @@ function simulate(states, inputs,M1, M2)
         [a_f, a_r, b_f, b_r] = get_slip(states(4), states(5), u_(1,2), states(6), states(7));
         figure(2)
         speed_plot.XData = [speed_plot.XData, dt*j];
-        speed_plot.YData = [speed_plot.YData, a_f];
+        speed_plot.YData = [speed_plot.YData, states(4)];
         xlim([0, dt*j])
-        ylim([-1.0, 1.0])
+        ylim([0, 20.0])
 
         figure(1)
         plot_state([states(1) states(2) states(3)], 'r', 'x_0');
