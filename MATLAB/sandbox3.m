@@ -4,6 +4,7 @@ dt = 0.05;
 % u1 = 5;
 % u2 = 30;
 % inputs_list = generate_trajectories(100, 7, u1, u2, dt);
+
 SL_msg = rosmessage('A_star/state_lattice');
 friction_msg = rosmessage('A_star/friction_map');
 
@@ -20,6 +21,23 @@ friction_msg.Frictions(19) = -1;
 [SL_msg,M1, M2] = publish_trajectories(dt, SL_msg);
 % send(SL_pub, SL_msg);
 % send(friction_pub, friction_msg);
+
+
+figure(1)
+world_width = 3;
+world_length = 10;
+
+for i=1:world_length
+    for j=0:world_width-1
+        curr_x = j;
+        curr_y = i;
+
+        if(friction_msg.Frictions(i+j) == -1)
+            continue;
+        end
+    end
+end
+
 
 
 traj_key_sub = rossubscriber('/trajectory_keys', 'A_star/trajectory_keys', @(pub, msg) trajectory_cb(msg, M1, M2));
