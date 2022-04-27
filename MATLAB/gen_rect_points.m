@@ -1,6 +1,6 @@
 function [verts, faces] = gen_rect_points(X, Y)
-    length = 0.4;
-    width = 0.3;
+    length = 4;
+    width = 50;
     X_pt = [];
     Y_pt = [];
     

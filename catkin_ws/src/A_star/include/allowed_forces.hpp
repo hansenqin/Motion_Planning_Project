@@ -1,18 +1,9 @@
 struct allowed_forces{
-    double F_xf;
-    double F_xr;
-    double F_yf;
-    double F_yr;
-    double xi = 0.5;
-    double friction;
+    double F_x;
+    double F_y;
 
     allowed_forces(){};
-    allowed_forces(double friction_):
-    friction(friction_){
-
-    }
-
-    
-
-
+    allowed_forces(double F_x_, double F_y_):
+    F_x(F_x_),
+    F_y(F_y_){}
 };

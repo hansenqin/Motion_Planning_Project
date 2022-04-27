@@ -1,9 +1,6 @@
 close all
 % clear
 dt = 0.05;
-% u1 = 5;
-% u2 = 30;
-% inputs_list = generate_trajectories(100, 7, u1, u2, dt);
 
 SL_msg = rosmessage('A_star/state_lattice');
 friction_msg = rosmessage('A_star/friction_map');
@@ -12,32 +9,35 @@ friction_msg.Frictions = repmat(2,30,1);
 friction_msg.Frictions(10) = -1;
 friction_msg.Frictions(11) = -1;
 
-friction_msg.Frictions(18) = -1;
-friction_msg.Frictions(19) = -1;
+friction_msg.Frictions(20) = -1;
+friction_msg.Frictions(21) = -1;
 
 [friction_pub, ~] = rospublisher('/friction_map', 'A_star/friction_map');
 [SL_pub, ~] = rospublisher('/state_lattice', 'A_star/state_lattice');
 
-[SL_msg,M1, M2] = publish_trajectories(dt, SL_msg);
-% send(SL_pub, SL_msg);
-% send(friction_pub, friction_msg);
-
-
 figure(1)
+hold on
 world_width = 3;
 world_length = 10;
+ylim([-6,6])
+xlim([0,500])
 
-for i=1:world_length
-    for j=0:world_width-1
-        curr_x = j;
-        curr_y = i;
+for i=0:world_length-1
+    for j=1:world_width
+        curr_x = (j-2)*4;
+        curr_y = i*50;
 
-        if(friction_msg.Frictions(i+j) == -1)
-            continue;
+        if(friction_msg.Frictions(i*world_width+j) == -1)
+            [verts, faces] = gen_rect_points(curr_y, curr_x);
+            obs = patch(verts(:,1), verts(:,2), 'k');
+            
         end
     end
 end
 
+[SL_msg,M1, M2] = publish_trajectories(dt, SL_msg);
+% send(SL_pub, SL_msg);
+% send(friction_pub, friction_msg);
 
 
 traj_key_sub = rossubscriber('/trajectory_keys', 'A_star/trajectory_keys', @(pub, msg) trajectory_cb(msg, M1, M2));

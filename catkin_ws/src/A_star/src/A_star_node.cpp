@@ -5,6 +5,34 @@
 #include "planner.hpp"
 #include "allowed_forces.hpp"
 
+double dMF(double x, double B, double C, double D, double E){
+    return (C*D*cos(C*atan(B*x + E*(atan(B*x) - B*x)))*(B - E*(B - B/(B*B*x*x + 1))))/(pow((B*x + E*(atan(B*x) - B*x)),2) + 1);
+}
+
+double bin_search(double tolerance, double B, double C, double D, double E, double xi){
+    double left = 0;
+    double right = 0.15;
+    double pivot = 0;
+    int max_itr = 100;
+    int i=0;
+    while(i<max_itr){
+        pivot = (left+right)/2;
+        double curr_estimate = dMF(pivot, B, C, D, E) - dMF(0, B, C, D, E)*xi;
+
+        if(curr_estimate < tolerance){
+            return pivot;
+        }else if(curr_estimate > 0){
+            left = pivot;
+        }else if(curr_estimate < 0){
+            right = pivot;
+        }
+        i++;
+    }
+
+    return pivot;
+}
+
+
 std::string A_star_planner::get_trajectory_index(Node parent, Node child){
 
     int dx = child.x - parent.x;
@@ -56,10 +84,41 @@ std::vector<Node> A_star_planner::get_neighbors(const Node& curr_node){
     return node_vec;
 }
 
+allowed_forces get_max_slip(double mu){
+    double tolerance = 0.001;
+    double pi = 3.14;
+    double xi = 0.5;
+    double By=0.13*180/pi/mu;
+    double Cy=1.3;
+    double Dy=0.7*mu;
+    double Ey=-1.6;
+    double Bx=0.20*180/pi/mu;
+    double Cx=1.3;
+    double Dx=0.7*mu;
+    double Ex=-1.6;
+    double lf=1.4;
+    double lr=1.4;
+    double rw=0.5;
+    double m=1400;
+    double Izz=2667;
+    double J = 100;
+    double g = 9.81;
+    int max_itr = 100;
+
+    double a_max = bin_search(tolerance, By, Cy, Dy, Ey, xi);
+    double b_max = bin_search(tolerance, Bx, Cx, Dx, Ex, xi);
+
+    double Fx_max = lf/(lr+lf)*m*g;
+    double Fy_max = lf/(lr+lf)*m*g;
+
+    return allowed_forces(Fx_max, Fy_max);
+}
+
+
 bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node, Node child_node){
     //TODO:
 
-    // auto curr_trajectory = trajectory_map[trajectory_index];
+    auto curr_trajectory = trajectory_map[trajectory_index];
 
     int parent_x_idx = static_cast<int>((parent_node.x+4)/4);
     int parent_y_idx = static_cast<int>(parent_node.y/50);
@@ -69,12 +128,16 @@ bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node,
     double friction = std::min(friction_map[parent_y_idx][parent_x_idx], friction_map[child_y_idx][child_x_idx]);
 
     // std::cout<<"DEBUG: friction is: "<<friction<<std::endl;
-    // std::cout<<"DEBUG: parent_y_idx is: "<<parent_y_idx<<std::endl;
-    // std::cout<<"DEBUG: parent_x_idx is: "<<parent_x_idx<<std::endl;
+
     if(friction < 0){
-        std::cout<<"DEBUG: OBSTACLE"<<std::endl;
         return false;
     } 
+
+    allowed_forces max_forces = get_max_slip(friction);
+
+    if(max_forces.F_x <= curr_trajectory.max_F_xf || max_forces.F_y <= curr_trajectory.max_F_yf){
+        return false;
+    }
 
     return true;
 
