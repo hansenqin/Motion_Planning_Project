@@ -34,6 +34,9 @@ function [a, total_distance] = get_spline(x1, y1)
     for i=2:length(x_pts)
         total_distance = total_distance + norm([x_pts(i)-x_pts(i-1), y_pts(i)-y_pts(i-1)]);
     end
+    figure(1)
+    hold on
+    plot(x_pts, y_pts, 'LineWidth', 2, 'Color', 'k');
 end
 
 function [xyh_list, uvr_list] = get_xyhuvr( x1, u1, u2, total_distance, a, dt)
@@ -83,7 +86,9 @@ function [xyh_list, uvr_list] = get_xyhuvr( x1, u1, u2, total_distance, a, dt)
         h_new = atan(dydx_fun(x_new));
 
     end
-%     hold on
+%     subplot(3,1,2);
+%     scatter(xyh_list(1,:), xyh_list(2,:));
+%     subplot(3,1,3);
 %     scatter(xyh_list(1,:), xyh_list(2,:));
 end
 
@@ -136,6 +141,7 @@ function inputs_list = get_control_inputs(xyh_list, uvr_list, dt)
         inputs_list(:, end+1) = inputs;
 
     end
+    
 end
 
 

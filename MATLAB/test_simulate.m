@@ -28,6 +28,11 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
     F_xfw_max = 0;
     F_xr_max = 0;
     i=1;
+    
+    subplot(3,1,3)
+    hold on
+    car_plot = plot(0,0,'r', 'LineWidth', 2);
+    
     for i=1:length(inputs_list(2,:))
 
         x = states(1);
@@ -102,6 +107,10 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
 %     %     end
 %         hold on
 %         ylim([-10, 10])
+
+        car_plot.XData = [car_plot.XData, states(1)];
+        car_plot.YData = [car_plot.YData, states(2)];
+        
 % %         
     end
 end
