@@ -5,37 +5,49 @@ dt = 0.05;
 SL_msg = rosmessage('A_star/state_lattice');
 friction_msg = rosmessage('A_star/friction_map');
 
-friction_msg.Frictions = repmat(4,30,1);
+default_mu = 0.9;
+friction_msg.Frictions = repmat(default_mu,30,1);
 friction_msg.Frictions(10) = -1;
 friction_msg.Frictions(11) = -1;
 
 friction_msg.Frictions(20) = -1;
 friction_msg.Frictions(21) = -1;
-% friction_msg.Frictions(22) = 2;
-% friction_msg.Frictions(5) = 2;
+friction_msg.Frictions(14) = 0.14;
+friction_msg.Frictions(13) = 0.14;
+friction_msg.Frictions(16) = 0.14;
+friction_msg.Frictions(17) = 0.14;
 
 [friction_pub, ~] = rospublisher('/friction_map', 'A_star/friction_map');
 [SL_pub, ~] = rospublisher('/state_lattice', 'A_star/state_lattice');
 
 figure(1)
+subplot(4,1,1);
 hold on
 world_width = 3;
 world_length = 10;
 ylim([-6,6])
 xlim([0,500])
+friction_array = [[]];
+
+temp = gca;
+temp.XGrid = 'on';
+temp.YTick = [-4 0 4];
+temp.YGrid = 'on';
 
 for i=0:world_length-1
     for j=1:world_width
         curr_x = (j-2)*4;
         curr_y = i*50;
 
+        friction_array(i+1, j) = friction_msg.Frictions(i*world_width+j);
+
         if(friction_msg.Frictions(i*world_width+j) == -1)
-            [verts, faces] = gen_rect_points(curr_y, curr_x);
+            [verts, faces] = gen_rect_points_flat(curr_y, curr_x);
             obs = patch(verts(:,1), verts(:,2), 'k');
 
-        elseif(friction_msg.Frictions(i*world_width+j) ~= 4)
-            [verts, faces] = gen_rect_points(curr_y, curr_x);
-            obs = patch(verts(:,1), verts(:,2), 'b');
+        elseif(friction_msg.Frictions(i*world_width+j) ~= default_mu)
+            [verts, faces] = gen_rect_points(curr_y+25, curr_x);
+            obs = patch(verts(:,1), verts(:,2), 'b', 'FaceAlpha',.3);
         end
     end
 end
@@ -45,20 +57,19 @@ end
 % send(friction_pub, friction_msg);
 
 
-traj_key_sub = rossubscriber('/trajectory_keys', 'A_star/trajectory_keys', @(pub, msg) trajectory_cb(msg, M1, M2));
+traj_key_sub = rossubscriber('/trajectory_keys', 'A_star/trajectory_keys', @(pub, msg) trajectory_cb(msg, M1, M2,friction_array));
 
-
-function trajectory_cb(msg, M1, M2)
+function trajectory_cb(msg, M1, M2,friction_array)
 %TODO: change this:
-    states = [0;0;0;11;0;0;22];
-    simulate(states, msg, M1, M2)
+    states = [0;0;0;8;0;0;16];
+%     simulate(states, msg, M1, M2,friction_array)
 
 end
 
 function [SL_msg, M1, M2] = publish_trajectories(dt, SL_msg)
-    u1 = 6;
-    u2 = 16;
-    speeds = linspace(u1,u2,3);
+    u1 = 8;
+    u2 = 20;
+    speeds = linspace(u1,u2,4);
     dx = [-4 0 4];
     dy = 50;
     traj_msg = rosmessage('A_star/trajectory_info');
@@ -73,6 +84,9 @@ function [SL_msg, M1, M2] = publish_trajectories(dt, SL_msg)
 
                 [inputs_list, total_distance, reference_traj] = generate_trajectories(dy, dx(j), speeds(k), speeds(i), dt);
                 [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, speeds(k), dt);
+                if(speeds(k) == 8 && speeds(i) == 8)
+                    temp = 1;
+                end
 
                 traj_msg = rosmessage('A_star/trajectory_info');
                 traj_msg.Td = inputs_list(1,:);

@@ -67,7 +67,7 @@ public:
     void backtrack(Node curr_node);
     double get_gcost(Node curr_node,std::string curr_trajectory_index);
     double get_hcost(Node curr_node);
-    bool verify_traj(std::string trajectory_index, Node parent_node, Node child_node);
+    bool verify_traj(std::string trajectory_index, Node parent_node, Node& child_node);
     void friction_map_cb(const A_star::friction_map& msg);
     void state_lattice_cb(const A_star::state_lattice& msg);
     void reset();

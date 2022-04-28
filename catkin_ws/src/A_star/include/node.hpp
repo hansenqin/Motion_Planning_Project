@@ -2,6 +2,9 @@
 struct Node{
     double g_cost = 0;
     double h_cost = 0;
+    double friction;
+    double max_Fx;
+    double max_Fy;
     std::string prev= "";
     std::string trajectory_index = "";
     int x;

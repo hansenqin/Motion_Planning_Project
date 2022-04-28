@@ -23,5 +23,6 @@ struct trajectory{
     double u1;
     double u2;
     double length;
+    double friction;
 
 };

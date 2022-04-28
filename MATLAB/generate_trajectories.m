@@ -119,14 +119,19 @@ function inputs_list = get_control_inputs(xyh_list, uvr_list, dt)
         Q = eye(7);
         Q(1,1) = 10;
         Q(2,2) = 10;
-        Q(3,3) = 10000;
+        Q(3,3) = 1000;
         Q(4,4) = 10;
         Q(5,5) = 0;
-        Q(6,6) = 10000;
+        Q(6,6) = 1000;
         Q(7,7) = 10;
-
+        
         fun = @(u) (f_disc_fun(x1, [u(1);u(2)], dt, parameters)-x2)'*Q*(f_disc_fun(x1, [u(1);u(2)], dt, parameters)-x2);
-        inputs = fmincon(fun, inputs, [], [], [],[],[],[],[],options);
+        lb = [-10000, -0.5];
+        ub = [10000, 0.5];
+        inputs = fmincon(fun, inputs, [], [], [],[],lb,ub,[],options);
+        if abs(inputs(2)) > 1
+            abs(inputs(2))
+        end
         x1 = f_disc_fun(x1, inputs, dt, parameters);
         inputs_list(:, end+1) = inputs;
 

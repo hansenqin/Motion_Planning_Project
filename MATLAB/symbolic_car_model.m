@@ -45,24 +45,24 @@ a_r= -atan(vr/sqrt((u+0.05)^2));
 F_zf=lr/(lf+lr)*m*g;
 F_zr=lf/(lf+lr)*m*g;
 %     
-%     phi_yf=(1-Ey)*(a_f)+(Ey/By)*atan(By*(a_f));
-%     phi_yr=(1-Ey)*(a_r)+(Ey/By)*atan(By*(a_r));
-%     
-%     phi_xf=(1-Ex)*(b_f)+(Ex/Bx)*atan(Bx*(b_f));
-%     phi_xr=(1-Ex)*(b_r)+(Ex/Bx)*atan(Bx*(b_r));
-%     
-% 
-%     F_yfw=F_zf*Dy*sin(Cy*atan(By*phi_yf));
-%     F_yr=F_zr*Dy*sin(Cy*atan(By*phi_yr));
-%     
-%     F_xfw=F_zf*Dy*sin(Cy*atan(By*phi_xf));
-%     F_xr=F_zr*Dy*sin(Cy*atan(By*phi_xr));
-% 
-F_yfw = F_zf*6.4762*a_f;
-F_yr = F_zr*6.4762*a_r;
+    phi_yf=(1-Ey)*(a_f)+(Ey/By)*atan(By*(a_f));
+    phi_yr=(1-Ey)*(a_r)+(Ey/By)*atan(By*(a_r));
+    
+    phi_xf=(1-Ex)*(b_f)+(Ex/Bx)*atan(Bx*(b_f));
+    phi_xr=(1-Ex)*(b_r)+(Ex/Bx)*atan(Bx*(b_r));
+    
 
-F_xfw = F_zf*9.95*b_f;
-F_xr = F_zr*9.95*b_r;
+    F_yfw=F_zf*Dy*sin(Cy*atan(By*phi_yf));
+    F_yr=F_zr*Dy*sin(Cy*atan(By*phi_yr));
+    
+    F_xfw=F_zf*Dy*sin(Cy*atan(By*phi_xf));
+    F_xr=F_zr*Dy*sin(Cy*atan(By*phi_xr));
+% 
+% F_yfw = F_zf*6.4762*a_f;
+% F_yr = F_zr*6.4762*a_r;
+% 
+% F_xfw = F_zf*9.95*b_f;
+% F_xr = F_zr*9.95*b_r;
 
 f = [u*cos(h)-v*sin(h);  %x
      u*sin(h)+v*cos(h);  %y
@@ -82,8 +82,8 @@ B_c = jacobian(f,inputs);
 
 
 %% Write functions for the dynamics
-calc_A_c = matlabFunction(A_c,'File', 'calc_A_c', 'Vars',[{states},{inputs},{parameters}]);
-calc_B_c = matlabFunction(B_c,'File', 'calc_B_c', 'Vars',[{states},{inputs},{parameters}]);
+calc_A_c = matlabFunction(A_c,'File', 'calc_A_c_MF', 'Vars',[{states},{inputs},{parameters}]);
+calc_B_c = matlabFunction(B_c,'File', 'calc_B_c_MF', 'Vars',[{states},{inputs},{parameters}]);
 
-f = matlabFunction(f, 'File', 'f_cont_fun', 'Vars',[{states},{inputs},{parameters}]);
-f_disc = matlabFunction(f_disc,'File', 'f_disc_fun', 'Vars',[{states},{inputs},{dt},{parameters}]);
+f = matlabFunction(f, 'File', 'f_cont_fun_MF', 'Vars',[{states},{inputs},{parameters}]);
+f_disc = matlabFunction(f_disc,'File', 'f_disc_fun_MF', 'Vars',[{states},{inputs},{dt},{parameters}]);

@@ -29,6 +29,7 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
     F_xr_max = 0;
     i=1;
     for i=1:length(inputs_list(2,:))
+
         x = states(1);
         y = states(2);
         h = states(3);
@@ -80,12 +81,15 @@ function [F_yfw_max, F_yr_max, F_xfw_max, F_xr_max]=test_simulate(inputs_list, u
     
         F_xfw = F_zf*9.95*b_f;
         F_xr = F_zr*9.95*b_r;
+
+
+        if i>4 
+            F_yfw_max = max(abs(F_yfw), F_yfw_max);
+            F_yr_max = max(abs(F_yr), F_yr_max);
         
-        F_yfw_max = max(abs(F_yfw), F_yfw_max);
-        F_yr_max = max(abs(F_yr), F_yr_max);
-    
-        F_xfw_max = max(abs(F_xfw), F_xfw_max);
-        F_xr_max = max(abs(F_xr), F_xr_max);
+            F_xfw_max = max(abs(F_xfw), F_xfw_max);
+            F_xr_max = max(abs(F_xr), F_xr_max);
+        end
         
         states = f_cont_fun(states, [inputs_list(1,i); inputs_list(2,i)], parameters)*dt+states;
         

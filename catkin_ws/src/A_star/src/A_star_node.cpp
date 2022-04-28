@@ -90,13 +90,13 @@ allowed_forces get_max_slip(double mu){
     double tolerance = 0.001;
     double pi = 3.14;
     double xi = 0.1;
-    double By=0.13*180/pi/mu;
+    double By=0.13*180/pi/6/mu;
     double Cy=1.3;
-    double Dy=0.7*mu;
+    double Dy=0.7*6*mu;
     double Ey=-1.6;
-    double Bx=0.20*180/pi/mu;
+    double Bx=0.20*180/pi/6/mu;
     double Cx=1.3;
-    double Dx=0.7*mu;
+    double Dx=0.7*6*mu;
     double Ex=-1.6;
     double lf=1.4;
     double lr=1.4;
@@ -117,7 +117,7 @@ allowed_forces get_max_slip(double mu){
 }
 
 
-bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node, Node child_node){
+bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node, Node& child_node){
     //TODO:
 
     auto curr_trajectory = trajectory_map[trajectory_index];
@@ -126,28 +126,28 @@ bool A_star_planner::verify_traj(std::string trajectory_index, Node parent_node,
     int child_x_idx = static_cast<int>((parent_node.x+4)/4);
     int child_y_idx = static_cast<int>(child_node.y/50);
 
-    std::cout<<"DEBUG: friction_map size is: "<< friction_map.size()<<"x"<<friction_map[0].size()<<std::endl;
-    std::cout<<"parent_y_idx: "<< parent_y_idx<<std::endl;
-    std::cout<<"parent_x_idx: "<< parent_x_idx<<std::endl;
-    std::cout<<"child_y_idx:  "<< child_y_idx<<std::endl;
-    std::cout<<"child_x_idx:  "<< child_x_idx<<std::endl;
     double friction = std::min(friction_map[parent_y_idx][parent_x_idx], friction_map[child_y_idx][child_x_idx]);
-
+    child_node.friction = friction;
     // std::cout<<"DEBUG: friction is: "<<friction<<std::endl;
 
     if(friction < 0){
         return false;
     } 
-
-    allowed_forces max_forces = get_max_slip(friction);
-
-    std::cout<< "max_forces.F_x:           " << max_forces.F_x <<std::endl;
-    std::cout<< "curr_trajectory.max_F_xf: " << curr_trajectory.max_F_xf <<std::endl;
-
-    std::cout<< "max_forces.F_y:           " << max_forces.F_y <<std::endl;
-    std::cout<< "curr_trajectory.max_F_yf: " << curr_trajectory.max_F_yf <<std::endl;
-    std::cout<< " "<<std::endl;
     
+    allowed_forces max_forces = get_max_slip(friction);
+    child_node.friction = friction;
+    child_node.max_Fx = max_forces.F_x;
+    child_node.max_Fy = max_forces.F_y;
+
+    // std::cout<< "max_forces.F_x:           " << max_forces.F_x <<std::endl;
+    // std::cout<< "curr_trajectory.max_F_xf: " << curr_trajectory.max_F_xf <<std::endl;
+
+    // std::cout<< "max_forces.F_y:           " << max_forces.F_y <<std::endl;
+    // std::cout<< "curr_trajectory.max_F_yf: " << curr_trajectory.max_F_yf <<std::endl;
+    // std::cout<< " "<<std::endl;
+
+    // std::cout<<"friction:       "<<friction<<std::endl;
+    // std::cout<<"max_forces.F_y: " << max_forces.F_y <<std::endl;
     if(max_forces.F_x <= curr_trajectory.max_F_xf || max_forces.F_y <= curr_trajectory.max_F_yf){
         
         return false;
@@ -161,6 +161,14 @@ void A_star_planner::backtrack(Node curr_node){
     while(curr_node.prev != ""){
         // std::cout<<"DEBUG: curr_node.prev = "<<curr_node.prev<<std::endl;
         final_trajectories.push_back(curr_node.trajectory_index);
+        auto curr_trajectory = trajectory_map[curr_node.trajectory_index];
+        std::cout<<"DEBUG: curr_node friction =     "<<curr_node.friction<<std::endl;
+        std::cout<<"DEBUG: curr_trajectory max Fx = "<<curr_trajectory.max_F_xf<<std::endl;
+        std::cout<<"DEBUG: curr_trajectory max Fy = "<<curr_trajectory.max_F_yf<<std::endl;
+        std::cout<<"DEBUG: curr_allowed max Fx =    "<<curr_node.max_Fx<<std::endl;
+        std::cout<<"DEBUG: curr_allowed max Fy =    "<<curr_node.max_Fy<<std::endl;
+        std::cout<<"DEBUG: trajectory index is =    "<<curr_node.trajectory_index<<std::endl;
+        std::cout<<""<<std::endl;
         curr_node = closed_set[curr_node.prev];
     }
     std::reverse(final_trajectories.begin(), final_trajectories.end());
@@ -196,7 +204,7 @@ void A_star_planner::friction_map_cb(const A_star::friction_map& msg){
         std::cout<<" "<<std::endl;
     }
     std::cout<<"finished loading friction map!"<<std::endl;
-    auto trajectory_to_send = A_star_planner::search(0, 0, 11);
+    auto trajectory_to_send = A_star_planner::search(0, 0, 8);
     return;
 }
 
@@ -234,7 +242,7 @@ std::vector<std::string> A_star_planner::search(int curr_x, int curr_y, double c
 
         if(!curr_node.prev.empty()){
             curr_node.trajectory_index = get_trajectory_index(closed_set[curr_node.prev], curr_node);
-            std::cout<<"DEBUG: curr_node.trajectory_index = "<<curr_node.trajectory_index<<std::endl;
+            // std::cout<<"DEBUG: curr_node.trajectory_index = "<<curr_node.trajectory_index<<std::endl;
         }
         
         closed_set[curr_node.get_key()] = curr_node;
@@ -285,9 +293,9 @@ int main(int argc, char** argv){
     ros::NodeHandle nh;
     int map_width = 3;
     int map_length = 10;
-    int min_speed = 6;
-    int max_speed = 16;
-    int speed_intervals = 2;
+    int min_speed = 8;
+    int max_speed = 20;
+    int speed_intervals = 3;
 
 
     A_star_planner planner(nh, map_width, map_length, min_speed, max_speed, speed_intervals);
